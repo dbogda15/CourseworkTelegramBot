@@ -62,6 +62,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                                     Hello!
                                     You can ask me to remind you of the task!
                                     For example: "01.02.2023 10:00 Send a message to my cousin"
+                                    You can also get the list of daily tasks by command /daily
                                     """);
                         } else if ("/daily".equals(text)) {
                            sendNotificationsList(chatId);
