@@ -2,7 +2,7 @@ package me.dbogda.telegrambot.timer;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
-import me.dbogda.telegrambot.repository.NotificationTaskRepository;
+import me.dbogda.telegrambot.service.NotificationTaskService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,21 +12,21 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class NotificationTaskTimer {
-    private final NotificationTaskRepository notificationTaskRepository;
+    private final NotificationTaskService notificationTaskService;
     private final TelegramBot telegramBot;
-    public NotificationTaskTimer(NotificationTaskRepository notificationTaskRepository, TelegramBot telegramBot) {
-        this.notificationTaskRepository = notificationTaskRepository;
+    public NotificationTaskTimer(NotificationTaskService notificationTaskService, TelegramBot telegramBot) {
+        this.notificationTaskService = notificationTaskService;
         this.telegramBot = telegramBot;
     }
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void task(){
-        notificationTaskRepository.findAllByNotificationDateTime(
+        notificationTaskService.getNotificationTasksByDateTime(
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .forEach(
                 notificationTask -> {
                    telegramBot.execute(new SendMessage(notificationTask.getChatId(),"Hey! Your task at the moment: " + notificationTask.getMessage()));
-                   notificationTaskRepository.delete(notificationTask);
+                   notificationTaskService.delete(notificationTask);
                 });
 
     }
